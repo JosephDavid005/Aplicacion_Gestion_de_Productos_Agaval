@@ -12,7 +12,7 @@
   - Archivos: `Domain/*`, `Domain.Tests/*`
   - Hecho cuando: tests de límites (Precio<=0, Stock<0, nombre vacío, Stock==Minimo, salida>stock) en verde.
 
-- [ ] **T3. Application: Commands Crear/Editar/Eliminar con handlers y puertos** (Cubre: RF-2, RF-3, RF-5, RF-9)
+- [x] **T3. Application: Commands Crear/Editar/Eliminar con handlers y puertos** (Cubre: RF-2, RF-3, RF-5, RF-9)
   - Archivos: `Application/Productos/Commands/*`, `Application.Tests/*`
   - Hecho cuando: handlers probados con repositorios simulados (éxito, inválido, no encontrado, categoría inexistente).
 
@@ -43,6 +43,7 @@
 - [ ] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
   - Archivos: `producto-filters/*`, diálogo de ajuste, `README.md`
   - Hecho cuando: specs de filtrado en verde; README permite ejecutar backend+frontend desde cero.
+
 
 
 

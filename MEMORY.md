@@ -4,7 +4,7 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 ## Estado Actual
 - Versión / Hito: v0.1.0-bootstrap
 - Spec Activa: `specs/001-gestor-inventario-core/` (aprobada; plan y tasks pendientes de aprobación)
-- Progreso de Tareas: [2 de 10 tareas completadas: T1 y T2 OK]
+- Progreso de Tareas: [3 de 10 tareas completadas: T1, T2 y T3 OK]
 
 ## Decisiones Importantes de Arquitectura (y por qué)
 - Backend: Clean Architecture (Domain, Application, Infrastructure, API) con CQRS (MediatR).
@@ -17,6 +17,8 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 
 - T2: Dominio puro completado. 27 tests unitarios en verde cubriendo invariantes, IsLowStock estricto y AdjustStock con validación de stock negativo.
 
+- T3: MediatR 12.4.1 integrado en Application. Commands Crear/Editar/Eliminar probados con NSubstitute en 8 tests en verde.
+
 ## Aprendizajes y Trampas a Evitar
 - Prohibido el uso de `any`, `NgModules`, `*ngIf`/`*ngFor`, `::ng-deep` y `!important`.
 - Validar que .NET 10 SDK esté configurado o aprovisionado para el backend.
@@ -28,7 +30,8 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 
 ## Próximos Pasos Inmediatos
 - Aprobar plan.md y tasks.md (Compuerta 2). Decisión: MediatR 12.x aprobado.
-- Ejecutar T3 (Application Commands con MediatR) tras aprobación de T2.
+- Ejecutar T4 (Application Queries y AjustarStock) tras aprobación de T3.
+
 
 
 
