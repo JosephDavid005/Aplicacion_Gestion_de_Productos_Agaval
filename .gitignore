@@ -1,0 +1,9 @@
+.env
+bin/
+obj/
+node_modules/
+.angular/
+dist/
+*.user
+.vs/
+TestResults/
