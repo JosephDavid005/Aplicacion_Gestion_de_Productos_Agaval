@@ -8,7 +8,7 @@
   - Archivos: `backend/*.sln`, 4 proyectos src + tests, `docker-compose.yml`, `.gitignore`
   - Hecho cuando: test de dependencias entre capas en rojo→verde con `docker compose run --rm api-tests`; `docker compose up -d` levanta SQL Server sano y la API.
 
-- [ ] **T2. Dominio: Producto y Categoria con validaciones y AdjustStock** (Cubre: RF-3, RF-6, RF-7)
+- [x] **T2. Dominio: Producto y Categoria con validaciones y AdjustStock** (Cubre: RF-3, RF-6, RF-7)
   - Archivos: `Domain/*`, `Domain.Tests/*`
   - Hecho cuando: tests de límites (Precio<=0, Stock<0, nombre vacío, Stock==Minimo, salida>stock) en verde.
 
@@ -43,5 +43,6 @@
 - [ ] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
   - Archivos: `producto-filters/*`, diálogo de ajuste, `README.md`
   - Hecho cuando: specs de filtrado en verde; README permite ejecutar backend+frontend desde cero.
+
 
 

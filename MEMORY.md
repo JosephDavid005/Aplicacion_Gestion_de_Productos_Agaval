@@ -4,7 +4,7 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 ## Estado Actual
 - Versión / Hito: v0.1.0-bootstrap
 - Spec Activa: `specs/001-gestor-inventario-core/` (aprobada; plan y tasks pendientes de aprobación)
-- Progreso de Tareas: [1 de 10 tareas completadas: T1 OK]
+- Progreso de Tareas: [2 de 10 tareas completadas: T1 y T2 OK]
 
 ## Decisiones Importantes de Arquitectura (y por qué)
 - Backend: Clean Architecture (Domain, Application, Infrastructure, API) con CQRS (MediatR).
@@ -14,6 +14,8 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 - REGLA: todo corre en contenedores Docker (build, scaffold, tests, servidores). Nunca en el host. Se corrigió plan/tasks/AGENTS/constitución el 2026-10-10.
 
 - T1: stack Compose OK (sqlserver healthy, api :5000, api-tests con `docker compose --profile test run --rm api-tests`). Scaffold webapi trae WeatherForecast; se elimina en T6.
+
+- T2: Dominio puro completado. 27 tests unitarios en verde cubriendo invariantes, IsLowStock estricto y AdjustStock con validación de stock negativo.
 
 ## Aprendizajes y Trampas a Evitar
 - Prohibido el uso de `any`, `NgModules`, `*ngIf`/`*ngFor`, `::ng-deep` y `!important`.
@@ -26,7 +28,8 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 
 ## Próximos Pasos Inmediatos
 - Aprobar plan.md y tasks.md (Compuerta 2). Decisión: MediatR 12.x aprobado.
-- Ejecutar T2 (Dominio) tras revisión de T1.
+- Ejecutar T3 (Application Commands con MediatR) tras aprobación de T2.
+
 
 
 
