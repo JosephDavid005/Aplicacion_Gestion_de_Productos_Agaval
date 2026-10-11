@@ -28,7 +28,7 @@
   - Archivos: `Api/*`, `Api.IntegrationTests/*`
   - Hecho cuando: tests de endpoints con códigos 201/400/404/200 en verde y Swagger accesible.
 
-- [ ] **T7. Servicios frontend/frontend-tests en Compose + scaffold Angular (vía contenedor) zoneless + Material + core/shared/features + modelos y servicio HTTP** (Cubre: RF-13)
+- [x] **T7. Servicios frontend/frontend-tests en Compose + scaffold Angular (vía contenedor) zoneless + Material + core/shared/features + modelos y servicio HTTP** (Cubre: RF-13)
   - Archivos: `frontend/*`, `features/productos/{models,services}`, `app.config.ts`
   - Hecho cuando: spec del servicio (HttpTestingController) en verde; build sin `any`/NgModules.
 
@@ -43,6 +43,7 @@
 - [ ] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
   - Archivos: `producto-filters/*`, diálogo de ajuste, `README.md`
   - Hecho cuando: specs de filtrado en verde; README permite ejecutar backend+frontend desde cero.
+
 
 
 

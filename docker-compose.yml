@@ -31,12 +31,37 @@ services:
         condition: service_healthy
     profiles: ["app"]
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    working_dir: /app/frontend
+    command: ["bun", "run", "start", "--", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000"]
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app/frontend
+    depends_on:
+      api:
+        condition: service_started
+    profiles: ["app"]
+
   api-tests:
     image: mcr.microsoft.com/dotnet/sdk:10.0
     working_dir: /app/backend
     command: ["dotnet", "test", "--verbosity", "quiet", "--nologo"]
     volumes:
       - ./backend:/app/backend
+    profiles: ["test"]
+
+  frontend-tests:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    working_dir: /app/frontend
+    command: ["bun", "run", "test", "--", "--watch=false"]
+    volumes:
+      - ./frontend:/app/frontend
     profiles: ["test"]
 
 volumes:
