@@ -4,7 +4,7 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 ## Estado Actual
 - Versión / Hito: v0.1.0-bootstrap
 - Spec Activa: `specs/001-gestor-inventario-core/` (aprobada; plan y tasks pendientes de aprobación)
-- Progreso de Tareas: [5 de 10 tareas completadas: T1, T2, T3, T4 y T5 OK]
+- Progreso de Tareas: [6 de 10 tareas completadas: Backend 100% listo (T1..T6 OK)]
 
 ## Decisiones Importantes de Arquitectura (y por qué)
 - Backend: Clean Architecture (Domain, Application, Infrastructure, API) con CQRS (MediatR).
@@ -23,6 +23,8 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 
 - T5: PersistenceContext, repositorios y DataSeeder probados contra SQLite en tests de integración y mapeados exactamente a SQL Server. Generado script.sql oficial.
 
+- T6: Backend .NET 10 completado al 100%. 61 tests en verde (Domain, Application, Infrastructure, Api, Architecture). Swagger y API live en contenedor :5000 probados contra SQL Server.
+
 ## Aprendizajes y Trampas a Evitar
 - Prohibido el uso de `any`, `NgModules`, `*ngIf`/`*ngFor`, `::ng-deep` y `!important`.
 - Validar que .NET 10 SDK esté configurado o aprovisionado para el backend.
@@ -34,7 +36,8 @@ Memoria viva entre sesiones. Mantener siempre en menos de 50 líneas.
 
 ## Próximos Pasos Inmediatos
 - Aprobar plan.md y tasks.md (Compuerta 2). Decisión: MediatR 12.x aprobado.
-- Ejecutar T6 (API REST, ProductosController, ProblemDetails, Swagger y Seeder en startup) tras aprobación de T5.
+- Ejecutar T7 (Frontend: Angular v20+ Zoneless, Material, Core/Shared/Features y Servicio HTTP) tras aprobación de T6.
+
 
 
 

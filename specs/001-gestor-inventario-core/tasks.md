@@ -24,7 +24,7 @@
   - Archivos: `Infrastructure/*`, `database/script.sql`
   - Hecho cuando: test de integración verifica mapeo, constraint de stock y seed (3 categorías + productos).
 
-- [ ] **T6. API: ProductosController, categorías (lectura), manejo de errores, Swagger** (Cubre: RF-2..RF-9)
+- [x] **T6. API: ProductosController, categorías (lectura), manejo de errores, Swagger** (Cubre: RF-2..RF-9)
   - Archivos: `Api/*`, `Api.IntegrationTests/*`
   - Hecho cuando: tests de endpoints con códigos 201/400/404/200 en verde y Swagger accesible.
 
@@ -43,6 +43,7 @@
 - [ ] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
   - Archivos: `producto-filters/*`, diálogo de ajuste, `README.md`
   - Hecho cuando: specs de filtrado en verde; README permite ejecutar backend+frontend desde cero.
+
 
 
 
