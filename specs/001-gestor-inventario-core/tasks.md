@@ -20,7 +20,7 @@
   - Archivos: `Application/Productos/Queries/*`, `AjustarStockCommand`, tests
   - Hecho cuando: tests unitarios en verde, incluido 404 y salida inválida.
 
-- [ ] **T5. Infrastructure: PersistenceContext, repositorios, migración, seed y script.sql** (Cubre: RF-1, RF-8)
+- [x] **T5. Infrastructure: PersistenceContext, repositorios, migración, seed y script.sql** (Cubre: RF-1, RF-8)
   - Archivos: `Infrastructure/*`, `database/script.sql`
   - Hecho cuando: test de integración verifica mapeo, constraint de stock y seed (3 categorías + productos).
 
@@ -43,6 +43,7 @@
 - [ ] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
   - Archivos: `producto-filters/*`, diálogo de ajuste, `README.md`
   - Hecho cuando: specs de filtrado en verde; README permite ejecutar backend+frontend desde cero.
+
 
 
 
