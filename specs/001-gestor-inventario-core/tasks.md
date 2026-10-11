@@ -16,7 +16,7 @@
   - Archivos: `Application/Productos/Commands/*`, `Application.Tests/*`
   - Hecho cuando: handlers probados con repositorios simulados (éxito, inválido, no encontrado, categoría inexistente).
 
-- [ ] **T4. Application: Queries Listar/ObtenerPorId/StockBajo + AjustarStock** (Cubre: RF-4, RF-6, RF-7)
+- [x] **T4. Application: Queries Listar/ObtenerPorId/StockBajo + AjustarStock** (Cubre: RF-4, RF-6, RF-7)
   - Archivos: `Application/Productos/Queries/*`, `AjustarStockCommand`, tests
   - Hecho cuando: tests unitarios en verde, incluido 404 y salida inválida.
 
@@ -43,6 +43,7 @@
 - [ ] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
   - Archivos: `producto-filters/*`, diálogo de ajuste, `README.md`
   - Hecho cuando: specs de filtrado en verde; README permite ejecutar backend+frontend desde cero.
+
 
 
 
