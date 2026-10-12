@@ -27,6 +27,20 @@ CREATE TABLE Productos (
 );
 GO
 
+CREATE TABLE MovimientosInventario (
+    Id             INT IDENTITY(1,1)   NOT NULL,
+    ProductoId     INT                  NOT NULL,
+    TipoMovimiento VARCHAR(10)         NOT NULL,
+    Cantidad       INT                  NOT NULL,
+    Fecha          DATETIME2            NOT NULL DEFAULT (GETDATE()),
+    Observacion    NVARCHAR(255)        NULL,
+    CONSTRAINT PK_MovimientosInventario PRIMARY KEY (Id),
+    CONSTRAINT FK_Movimientos_Productos FOREIGN KEY (ProductoId)
+        REFERENCES Productos (Id) ON DELETE CASCADE,
+    CONSTRAINT CK_Movimientos_Tipo CHECK (TipoMovimiento IN ('ENTRADA', 'SALIDA'))
+);
+GO
+
 -- Datos iniciales (seed obligatorio)
 INSERT INTO Categorias (Nombre) VALUES
     (N'Electrónica'), (N'Oficina'), (N'Aseo');
@@ -40,4 +54,11 @@ INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, StockMinimo, Categori
     (N'Bolígrafo Kilométrico Negro', N'Caja x 12 unidades', 18000.00, 4, 8, 2),
     (N'Detergente Multiusos 1L', N'Biodegradable con aroma cítrico', 14500.00, 15, 6, 3),
     (N'Desinfectante en Spray', N'Elimina 99.9% bacterias 400ml', 19900.00, 2, 5, 3);
+GO
+
+-- Movimientos iniciales para demostración (Kardex)
+INSERT INTO MovimientosInventario (ProductoId, TipoMovimiento, Cantidad, Observacion) VALUES
+    (1, 'ENTRADA', 12, N'Carga de inventario inicial'),
+    (2, 'ENTRADA', 10, N'Carga inicial de accesorios'),
+    (2, 'SALIDA', 7, N'Venta mostrador lote 1');
 GO

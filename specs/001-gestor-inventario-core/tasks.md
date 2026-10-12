@@ -32,15 +32,15 @@
   - Archivos: `frontend/*`, `features/productos/{models,services}`, `app.config.ts`
   - Hecho cuando: spec del servicio (HttpTestingController) en verde; build sin `any`/NgModules.
 
-- [ ] **T8. Store con Signals y listado en tabla con indicador de stock bajo** (Cubre: RF-10, RF-13)
+- [x] **T8. Store con Signals y listado en tabla con indicador de stock bajo** (Cubre: RF-10, RF-13)
   - Archivos: `features/productos/components/producto-list/*`, store, `routes.ts` (lazy)
   - Hecho cuando: specs del store y componente (OnPush, @for, BEM) en verde.
 
-- [ ] **T9. Formulario reactivo tipado de crear/editar con selector de categoría** (Cubre: RF-11)
+- [x] **T9. Formulario reactivo tipado de crear/editar con selector de categoría** (Cubre: RF-11)
   - Archivos: `features/productos/components/producto-form/*`
   - Hecho cuando: specs de validación y envío en verde.
 
-- [ ] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
+- [x] **T10. Filtros por categoría/estado de stock, ajuste de stock en UI y README** (Cubre: RF-12, RF-7)
   - Archivos: `producto-filters/*`, diálogo de ajuste, `README.md`
   - Hecho cuando: specs de filtrado en verde; README permite ejecutar backend+frontend desde cero.
 

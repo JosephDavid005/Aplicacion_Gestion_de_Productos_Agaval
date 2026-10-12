@@ -7,5 +7,6 @@ namespace GestorInventario.Application.Productos.Commands.AjustarStock;
 public record AjustarStockCommand(
     int ProductoId,
     TipoMovimiento Tipo,
-    int Cantidad
+    int Cantidad,
+    string? Observacion = null
 ) : IRequest<ProductoDto>;

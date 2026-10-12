@@ -1,0 +1,132 @@
+<div class="categorias-view">
+  <!-- Cabecera de la sección -->
+  <header class="categorias-view__header">
+    <div class="categorias-view__header-info">
+      <h1 class="categorias-view__title">Gestión de Categorías</h1>
+      <p class="categorias-view__subtitle">
+        Administra las familias y clasificaciones de productos para el catálogo de Agaval.
+      </p>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      class="categorias-view__btn-crear"
+      (click)="abrirCrearCategoria()"
+    >
+      <mat-icon>add</mat-icon>
+      <span>Nueva Categoría</span>
+    </button>
+  </header>
+
+  <!-- Barra de Filtro / Búsqueda -->
+  <div class="categorias-view__toolbar">
+    <mat-form-field appearance="outline" class="categorias-view__search">
+      <mat-label>Buscar por nombre</mat-label>
+      <input
+        matInput
+        [value]="store.searchTerm()"
+        (input)="onSearchChange($event)"
+        placeholder="Ej: Electrónica, Calzado..."
+        autocomplete="off"
+      />
+      <mat-icon matPrefix>search</mat-icon>
+      @if (store.searchTerm()) {
+        <button matSuffix mat-icon-button (click)="store.setSearchTerm('')" aria-label="Limpiar búsqueda">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+  </div>
+
+  <!-- Mensajes de Error -->
+  @if (store.error()) {
+    <div class="categorias-view__alert categorias-view__alert--error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ store.error() }}</span>
+    </div>
+  }
+
+  <!-- Spinner de Carga -->
+  @if (store.isLoading()) {
+    <div class="categorias-view__loading">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Cargando categorías...</p>
+    </div>
+  } @else {
+    <!-- Tabla de Categorías -->
+    <div class="categorias-view__table-container mat-elevation-z2">
+      <table mat-table [dataSource]="store.filteredCategorias()" class="categorias-view__table">
+        <!-- Columna ID -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="categorias-view__th">#</th>
+          <td mat-cell *matCellDef="let element" class="categorias-view__td categorias-view__td--id">
+            {{ element.id }}
+          </td>
+        </ng-container>
+
+        <!-- Columna Nombre -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef class="categorias-view__th">Nombre</th>
+          <td mat-cell *matCellDef="let element" class="categorias-view__td categorias-view__td--nombre">
+            <span class="categorias-view__nombre-text">{{ element.nombre }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Columna Estado -->
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef class="categorias-view__th">Estado</th>
+          <td mat-cell *matCellDef="let element" class="categorias-view__td">
+            <span
+              class="categorias-view__badge"
+              [class.categorias-view__badge--activo]="element.activo"
+              [class.categorias-view__badge--inactivo]="!element.activo"
+            >
+              <mat-icon class="categorias-view__badge-icon">
+                {{ element.activo ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              {{ element.activo ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Columna Acciones -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef class="categorias-view__th categorias-view__th--acciones">
+            Acciones
+          </th>
+          <td mat-cell *matCellDef="let element" class="categorias-view__td categorias-view__td--acciones">
+            <button
+              mat-icon-button
+              matTooltip="Editar categoría"
+              aria-label="Editar"
+              class="c-btn-edit"
+              (click)="abrirEditarCategoria(element)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              matTooltip="Eliminar categoría"
+              aria-label="Eliminar"
+              class="c-btn-delete"
+              (click)="eliminarCategoria(element)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="categorias-view__row"></tr>
+
+        <!-- Fila vacía -->
+        <tr class="mat-row categorias-view__empty-row" *matNoDataRow>
+          <td class="mat-cell categorias-view__empty-cell" [attr.colspan]="displayedColumns.length">
+            <mat-icon class="categorias-view__empty-icon">category</mat-icon>
+            <p>No se encontraron categorías.</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  }
+</div>

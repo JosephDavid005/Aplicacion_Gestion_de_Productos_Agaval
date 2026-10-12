@@ -1,0 +1,115 @@
+<section class="c-producto-form">
+  <div class="c-producto-form__header">
+    <a mat-button [routerLink]="['/productos']" class="c-producto-form__back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Volver al inventario</span>
+    </a>
+    <h1 class="c-producto-form__title">
+      {{ isEditMode() ? 'Editar Producto' : 'Nuevo Producto' }}
+    </h1>
+    <p class="c-producto-form__subtitle">
+      {{ isEditMode() ? 'Modifique los campos y guarde los cambios' : 'Complete la información para registrar el producto en el catálogo' }}
+    </p>
+  </div>
+
+  @if (errorMessage(); as error) {
+    <div class="c-producto-form__alert" role="alert">
+      <mat-icon class="c-producto-form__alert-icon">error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <mat-card class="c-producto-form__card mat-elevation-z2">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="c-form-grid" novalidate>
+        <!-- Nombre -->
+        <mat-form-field appearance="outline" class="c-form-grid__field c-form-grid__field--full">
+          <mat-label>Nombre del producto</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej. Zapatillas Running Pro" maxlength="150" required />
+          @if (form.controls.nombre.hasError('required') && form.controls.nombre.touched) {
+            <mat-error>El nombre del producto es obligatorio.</mat-error>
+          }
+          @if (form.controls.nombre.hasError('maxlength')) {
+            <mat-error>Máximo 150 caracteres permitidos.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Categoría -->
+        <mat-form-field appearance="outline" class="c-form-grid__field">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoriaId" required>
+            @for (cat of categorias(); track cat.id) {
+              <mat-option [value]="cat.id">{{ cat.nombre }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.categoriaId.hasError('required') && form.controls.categoriaId.touched) {
+            <mat-error>Debe seleccionar una categoría.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Precio -->
+        <mat-form-field appearance="outline" class="c-form-grid__field">
+          <mat-label>Precio (COP)</mat-label>
+          <input matInput type="number" formControlName="precio" min="0.01" step="0.01" placeholder="Ej. 189900" required />
+          <span matTextPrefix>$&nbsp;</span>
+          @if (form.controls.precio.hasError('required') && form.controls.precio.touched) {
+            <mat-error>El precio es obligatorio.</mat-error>
+          }
+          @if (form.controls.precio.hasError('min')) {
+            <mat-error>El precio debe ser mayor a 0.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Stock Inicial (Sólo creación) -->
+        <mat-form-field appearance="outline" class="c-form-grid__field">
+          <mat-label>Stock Actual</mat-label>
+          <input matInput type="number" formControlName="stock" min="0" placeholder="Ej. 25" required />
+          @if (isEditMode()) {
+            <mat-hint>El stock se actualiza mediante ajustes de inventario.</mat-hint>
+          }
+          @if (form.controls.stock.hasError('required') && form.controls.stock.touched) {
+            <mat-error>El stock es obligatorio.</mat-error>
+          }
+          @if (form.controls.stock.hasError('min')) {
+            <mat-error>El stock no puede ser negativo.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Stock Mínimo -->
+        <mat-form-field appearance="outline" class="c-form-grid__field">
+          <mat-label>Stock Mínimo (Alerta)</mat-label>
+          <input matInput type="number" formControlName="stockMinimo" min="0" placeholder="Ej. 5" required />
+          <mat-hint>Límite bajo el cual se activará la alerta visual.</mat-hint>
+          @if (form.controls.stockMinimo.hasError('required') && form.controls.stockMinimo.touched) {
+            <mat-error>El stock mínimo es obligatorio.</mat-error>
+          }
+          @if (form.controls.stockMinimo.hasError('min')) {
+            <mat-error>El stock mínimo no puede ser negativo.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Descripción -->
+        <mat-form-field appearance="outline" class="c-form-grid__field c-form-grid__field--full">
+          <mat-label>Descripción (opcional)</mat-label>
+          <textarea matInput formControlName="descripcion" rows="3" maxlength="500" placeholder="Detalles o especificaciones..."></textarea>
+          @if (form.controls.descripcion.hasError('maxlength')) {
+            <mat-error>Máximo 500 caracteres.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Botones de Acción -->
+        <div class="c-producto-form__actions c-form-grid__field--full">
+          <a mat-stroked-button [routerLink]="['/productos']" [disabled]="isLoading()">
+            Cancelar
+          </a>
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading() || form.invalid">
+            @if (isLoading()) {
+              <mat-spinner diameter="18" class="c-btn-spinner"></mat-spinner>
+            }
+            <span>{{ isEditMode() ? 'Actualizar Producto' : 'Crear Producto' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</section>

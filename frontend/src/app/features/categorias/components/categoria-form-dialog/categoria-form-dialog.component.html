@@ -1,0 +1,77 @@
+<div class="categoria-dialog">
+  <div class="categoria-dialog__header">
+    <div class="categoria-dialog__title-group">
+      <mat-icon class="categoria-dialog__icon">category</mat-icon>
+      <h2 mat-dialog-title class="categoria-dialog__title">
+        {{ isEditMode ? 'Editar Categoría' : 'Nueva Categoría' }}
+      </h2>
+    </div>
+    <button mat-icon-button mat-dialog-close [disabled]="isLoading()" aria-label="Cerrar modal">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="categoria-dialog__alert categoria-dialog__alert--error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="categoria-dialog__form">
+    <mat-dialog-content class="categoria-dialog__content">
+      <mat-form-field appearance="outline" class="categoria-dialog__field">
+        <mat-label>Nombre de la Categoría</mat-label>
+        <input
+          matInput
+          formControlName="nombre"
+          placeholder="Ej: Ropa Deportiva, Calzado, Tecnología"
+          maxlength="100"
+          autocomplete="off"
+        />
+        <mat-icon matPrefix>label</mat-icon>
+        @if (form.controls.nombre.hasError('required')) {
+          <mat-error>El nombre es obligatorio.</mat-error>
+        }
+        @if (form.controls.nombre.hasError('maxlength')) {
+          <mat-error>No puede exceder 100 caracteres.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="categoria-dialog__toggle-wrapper">
+        <mat-slide-toggle formControlName="activo" color="primary">
+          <span class="categoria-dialog__toggle-label">
+            Categoría Activa {{ form.controls.activo.value ? '(Visible en catálogo)' : '(Oculta)' }}
+          </span>
+        </mat-slide-toggle>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="categoria-dialog__actions">
+      <button
+        mat-button
+        type="button"
+        mat-dialog-close
+        [disabled]="isLoading()"
+      >
+        Cancelar
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid || isLoading()"
+      >
+        @if (isLoading()) {
+          <mat-spinner diameter="20" class="categoria-dialog__spinner"></mat-spinner>
+          <span>Guardando...</span>
+        } @else {
+          <ng-container>
+            <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+            <span>{{ isEditMode ? 'Actualizar' : 'Crear Categoría' }}</span>
+          </ng-container>
+        }
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>

@@ -5,6 +5,7 @@ using GestorInventario.Application.Productos.Commands.EliminarProducto;
 using GestorInventario.Application.Productos.Common;
 using GestorInventario.Application.Productos.Queries.ListarProductos;
 using GestorInventario.Application.Productos.Queries.ListarProductosStockBajo;
+using GestorInventario.Application.Productos.Queries.ObtenerMovimientos;
 using GestorInventario.Application.Productos.Queries.ObtenerProductoPorId;
 using GestorInventario.Domain.Enums;
 using MediatR;
@@ -49,11 +50,30 @@ public class ProductosController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id:int}/movimientos")]
+    [ProducesResponseType(typeof(IReadOnlyList<MovimientoInventarioDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IReadOnlyList<MovimientoInventarioDto>>> GetMovimientos(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(new ObtenerMovimientosPorProductoQuery(id), cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(ProductoDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ProductoDto>> Create([FromBody] CrearProductoCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<ProductoDto>> Create([FromBody] CreateProductoRequest request, CancellationToken cancellationToken)
     {
+        var command = new CrearProductoCommand(
+            request.Nombre,
+            request.Descripcion,
+            request.Precio,
+            request.Stock,
+            request.StockMinimo,
+            request.CategoriaId);
+
         var result = await _sender.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
@@ -75,7 +95,7 @@ public class ProductosController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductoDto>> AdjustStock(int id, [FromBody] AjusteStockRequest request, CancellationToken cancellationToken)
     {
-        var command = new AjustarStockCommand(id, request.Tipo, request.Cantidad);
+        var command = new AjustarStockCommand(id, request.Tipo, request.Cantidad, request.Observacion);
         var result = await _sender.Send(command, cancellationToken);
         return Ok(result);
     }
@@ -90,6 +110,15 @@ public class ProductosController : ControllerBase
     }
 }
 
+public record CreateProductoRequest(
+    string Nombre,
+    string? Descripcion,
+    decimal Precio,
+    int Stock,
+    int StockMinimo,
+    int CategoriaId
+);
+
 public record UpdateProductoRequest(
     string Nombre,
     string? Descripcion,
@@ -100,5 +129,6 @@ public record UpdateProductoRequest(
 
 public record AjusteStockRequest(
     TipoMovimiento Tipo,
-    int Cantidad
+    int Cantidad,
+    string? Observacion = null
 );

@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
+using GestorInventario.Api.Controllers;
 using GestorInventario.Application.Categorias.Common;
 using GestorInventario.Application.Productos.Commands.AjustarStock;
 using GestorInventario.Application.Productos.Commands.CrearProducto;
@@ -141,5 +142,42 @@ public class ProductosEndpointsTests : IClassFixture<CustomWebApplicationFactory
         // 3. Verificar que ya no existe -> 404
         var getRes = await _client.GetAsync($"/api/productos/{prod.Id}");
         getRes.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task GetMovimientos_WhenProductExists_ShouldReturn200AndAuditHistory()
+    {
+        // 1. Crear producto
+        var createCmd = new CrearProductoCommand("Audited Product", "Para probar kardex", 50000m, 10, 2, 1);
+        var createRes = await _client.PostAsJsonAsync("/api/productos", createCmd);
+        var prod = await createRes.Content.ReadFromJsonAsync<ProductoDto>(JsonOptions);
+
+        // 2. Ajustar stock (Entrada y Salida)
+        var entrada = new AjusteStockRequest(TipoMovimiento.Entrada, 5, "Lote Auditoría A");
+        await _client.PatchAsJsonAsync($"/api/productos/{prod!.Id}/stock", entrada);
+
+        var salida = new AjusteStockRequest(TipoMovimiento.Salida, 3, "Venta Auditoría B");
+        await _client.PatchAsJsonAsync($"/api/productos/{prod.Id}/stock", salida);
+
+        // 3. Consultar movimientos
+        var movRes = await _client.GetAsync($"/api/productos/{prod.Id}/movimientos");
+        movRes.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var movimientos = await movRes.Content.ReadFromJsonAsync<List<GestorInventario.Application.Productos.Queries.ObtenerMovimientos.MovimientoInventarioDto>>(JsonOptions);
+        movimientos.Should().NotBeNull();
+        movimientos!.Should().HaveCount(2);
+        movimientos[0].TipoMovimiento.Should().Be("SALIDA");
+        movimientos[0].Cantidad.Should().Be(3);
+        movimientos[0].Observacion.Should().Be("Venta Auditoría B");
+        movimientos[1].TipoMovimiento.Should().Be("ENTRADA");
+        movimientos[1].Cantidad.Should().Be(5);
+        movimientos[1].Observacion.Should().Be("Lote Auditoría A");
+    }
+
+    [Fact]
+    public async Task GetMovimientos_WhenProductDoesNotExist_ShouldReturn404NotFound()
+    {
+        var res = await _client.GetAsync("/api/productos/99999/movimientos");
+        res.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

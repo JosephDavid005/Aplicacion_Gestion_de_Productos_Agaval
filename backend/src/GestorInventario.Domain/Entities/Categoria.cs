@@ -32,6 +32,12 @@ public class Categoria
         Nombre = nombre.Trim();
     }
 
+    public void Update(string nombre, bool activo)
+    {
+        UpdateNombre(nombre);
+        Activo = activo;
+    }
+
     public void Desactivar() => Activo = false;
     public void Activar() => Activo = true;
 

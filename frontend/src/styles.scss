@@ -1,20 +1,170 @@
 @use '@angular/material' as mat;
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+// =============================================================================
+// DESIGN TOKENS & MINIMALIST UX - AGAVAL INVENTARIO
+// =============================================================================
+
+:root {
+  --agaval-primary: #1e3a8a;
+  --agaval-primary-dark: #172554;
+  --agaval-primary-light: #3b82f6;
+  --agaval-accent: #f59e0b;
+  --agaval-accent-light: #fef3c7;
+
+  --surface-base: #f8fafc;
+  --surface-card: #ffffff;
+  --surface-hover: #f1f5f9;
+
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+
+  --success-bg: #ecfdf5;
+  --success-border: #a7f3d0;
+  --success-text: #065f46;
+
+  --warning-bg: #fffbeb;
+  --warning-border: #fde68a;
+  --warning-text: #92400e;
+
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --danger-text: #991b1b;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+}
 
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+  font-family: 'Plus Jakarta Sans', Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--surface-base);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
 }
 
+// Respaldo global para ligaduras de Material Icons
+.material-icons, mat-icon {
+  font-family: 'Material Icons', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
 // BEM Utilities transversales
 .container-main {
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
 }
+
+// Scrollbars modernos
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+// =============================================================================
+// OVERLAYS, DROPDOWNS & DIALOGS (NIELSEN HEURISTICS: RECOGNITION & CLARITY)
+// Resuelve transparencia en paneles flotantes y superposición confusa de texto
+// =============================================================================
+
+.cdk-overlay-pane {
+  opacity: 1 !important;
+}
+
+// Panel flotante de mat-select
+.mat-mdc-select-panel {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  opacity: 1 !important;
+  border-radius: var(--radius-md, 8px) !important;
+  border: 1px solid var(--border-subtle, #e2e8f0) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08) !important;
+  padding: 6px 0 !important;
+  overflow: hidden !important;
+}
+
+// Opciones individuales del select
+.mat-mdc-option {
+  min-height: 40px !important;
+  background-color: #ffffff !important;
+  color: var(--text-main, #0f172a) !important;
+  font-size: 0.9rem !important;
+  font-family: inherit !important;
+  transition: background-color 0.15s ease !important;
+
+  &:hover:not(.mdc-list-item--disabled) {
+    background-color: var(--surface-hover, #f1f5f9) !important;
+  }
+
+  &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+    background-color: #eff6ff !important;
+    color: var(--agaval-primary, #1e3a8a) !important;
+    font-weight: 600 !important;
+  }
+
+  .mdc-list-item__primary-text {
+    color: inherit !important;
+  }
+}
+
+// Diálogos modales con superficie sólida y sombra elegante
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: #ffffff !important;
+  border-radius: var(--radius-lg, 12px) !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+}
+
+// Campos de formulario ergonómicos (evita bordes oscuros toscos)
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: #cbd5e1;
+  --mdc-outlined-text-field-focus-outline-color: #1e3a8a;
+  --mdc-outlined-text-field-hover-outline-color: #94a3b8;
+  --mdc-outlined-text-field-label-text-color: #64748b;
+  --mdc-outlined-text-field-focus-label-text-color: #1e3a8a;
+  --mat-select-enabled-arrow-color: #64748b;
+  --mat-select-focused-arrow-color: #1e3a8a;
+
+  .mat-mdc-text-field-wrapper {
+    background-color: #ffffff;
+    border-radius: var(--radius-md, 8px);
+  }
+}
+

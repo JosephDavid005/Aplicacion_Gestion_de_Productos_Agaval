@@ -45,6 +45,11 @@ public class ExceptionHandlingMiddleware
                 "Error de Validación de Negocio",
                 exception.Message
             ),
+            InvalidOperationException => (
+                HttpStatusCode.BadRequest,
+                "Operación Inválida",
+                exception.Message
+            ),
             NotFoundException => (
                 HttpStatusCode.NotFound,
                 "Recurso No Encontrado",

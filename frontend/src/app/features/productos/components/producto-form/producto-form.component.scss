@@ -1,0 +1,93 @@
+.c-producto-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+
+  &__header {
+    margin-bottom: 1.5rem;
+  }
+
+  &__back-btn {
+    margin-bottom: 0.5rem;
+    color: #1a237e;
+    font-weight: 500;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a237e;
+  }
+
+  &__subtitle {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.95rem;
+    color: #64748b;
+  }
+
+  &__card {
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 1.5rem;
+  }
+
+  &__alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fde8e8;
+    color: #c81e1e;
+    border: 1px solid #f8b4b4;
+    border-radius: 6px;
+    font-weight: 500;
+
+    &-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+  }
+}
+
+.c-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+
+  &__field {
+    width: 100%;
+
+    &--full {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.c-btn-spinner {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .c-form-grid {
+    grid-template-columns: 1fr;
+
+    &__field--full {
+      grid-column: 1;
+    }
+  }
+}

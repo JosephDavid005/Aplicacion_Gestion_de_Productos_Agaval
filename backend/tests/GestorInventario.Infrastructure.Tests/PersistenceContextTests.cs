@@ -115,4 +115,33 @@ public class PersistenceContextTests : IDisposable
         active.Should().Contain(c => c.Nombre == "Activa 1");
         active.Should().NotContain(c => c.Nombre == "Inactiva");
     }
+
+    [Fact]
+    public async Task MovimientoInventarioRepository_AddAndGetByProductoId_ShouldPersistAndRetrieveChronologically()
+    {
+        // Arrange
+        var cat = Categoria.Create("Ropa");
+        _context.Categorias.Add(cat);
+        await _context.SaveChangesAsync();
+
+        var prod = Producto.Create("Camisa", "Lino", 75000m, stock: 10, stockMinimo: 3, categoriaId: cat.Id);
+        _context.Productos.Add(prod);
+        await _context.SaveChangesAsync();
+
+        var repo = new MovimientoInventarioRepository(_context);
+        var mov1 = new MovimientoInventario(prod.Id, Domain.Enums.TipoMovimiento.Entrada, 10, "Lote 1");
+        var mov2 = new MovimientoInventario(prod.Id, Domain.Enums.TipoMovimiento.Salida, 2, "Venta");
+
+        await repo.AddAsync(mov1);
+        await repo.AddAsync(mov2);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var movimientos = await repo.GetByProductoIdAsync(prod.Id);
+
+        // Assert
+        movimientos.Should().HaveCount(2);
+        movimientos.Should().Contain(m => m.Observacion == "Lote 1" && m.TipoMovimiento == Domain.Enums.TipoMovimiento.Entrada && m.Cantidad == 10);
+        movimientos.Should().Contain(m => m.Observacion == "Venta" && m.TipoMovimiento == Domain.Enums.TipoMovimiento.Salida && m.Cantidad == 2);
+    }
 }

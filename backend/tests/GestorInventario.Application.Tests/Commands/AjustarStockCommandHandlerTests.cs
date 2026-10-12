@@ -13,12 +13,13 @@ namespace GestorInventario.Application.Tests.Commands;
 public class AjustarStockCommandHandlerTests
 {
     private readonly IProductoRepository _productoRepository = Substitute.For<IProductoRepository>();
+    private readonly IMovimientoInventarioRepository _movimientoRepository = Substitute.For<IMovimientoInventarioRepository>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
     private readonly AjustarStockCommandHandler _handler;
 
     public AjustarStockCommandHandlerTests()
     {
-        _handler = new AjustarStockCommandHandler(_productoRepository, _unitOfWork);
+        _handler = new AjustarStockCommandHandler(_productoRepository, _movimientoRepository, _unitOfWork);
     }
 
     [Fact]
@@ -28,13 +29,20 @@ public class AjustarStockCommandHandlerTests
         var producto = Producto.Create("Impresora", "Multifuncional", 800000m, stock: 5, stockMinimo: 2, categoriaId: 2);
         _productoRepository.GetByIdAsync(1, Arg.Any<CancellationToken>()).Returns(producto);
 
-        var command = new AjustarStockCommand(1, TipoMovimiento.Entrada, 3);
+        var command = new AjustarStockCommand(1, TipoMovimiento.Entrada, 3, "Entrada mercadería");
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Stock.Should().Be(8);
+        await _movimientoRepository.Received(1).AddAsync(
+            Arg.Is<MovimientoInventario>(m =>
+                m.ProductoId == 1 &&
+                m.TipoMovimiento == TipoMovimiento.Entrada &&
+                m.Cantidad == 3 &&
+                m.Observacion == "Entrada mercadería"),
+            Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -53,6 +61,12 @@ public class AjustarStockCommandHandlerTests
         // Assert
         result.Stock.Should().Be(1);
         result.IsLowStock.Should().BeTrue();
+        await _movimientoRepository.Received(1).AddAsync(
+            Arg.Is<MovimientoInventario>(m =>
+                m.ProductoId == 1 &&
+                m.TipoMovimiento == TipoMovimiento.Salida &&
+                m.Cantidad == 4),
+            Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -69,6 +83,7 @@ public class AjustarStockCommandHandlerTests
         // Assert
         await act.Should().ThrowAsync<NotFoundException>()
             .WithMessage("*no fue encontrado*");
+        await _movimientoRepository.DidNotReceive().AddAsync(Arg.Any<MovimientoInventario>(), Arg.Any<CancellationToken>());
         await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -88,6 +103,7 @@ public class AjustarStockCommandHandlerTests
         await act.Should().ThrowAsync<DomainValidationException>()
             .WithMessage("*insuficiente*");
         producto.Stock.Should().Be(2);
+        await _movimientoRepository.DidNotReceive().AddAsync(Arg.Any<MovimientoInventario>(), Arg.Any<CancellationToken>());
         await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

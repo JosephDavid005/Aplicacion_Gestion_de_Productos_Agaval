@@ -1,0 +1,180 @@
+<section class="c-producto-list">
+  <header class="c-producto-list__header">
+    <div class="c-producto-list__titles">
+      <h1 class="c-producto-list__title">Gestión de Inventario Agaval</h1>
+      <p class="c-producto-list__subtitle">Control y monitoreo de existencias de productos en tiempo real</p>
+    </div>
+
+    <div class="c-producto-list__header-actions">
+      <a mat-flat-button color="primary" [routerLink]="['/productos/nuevo']" class="c-btn-crear">
+        <mat-icon>add</mat-icon>
+        <span>Nuevo Producto</span>
+      </a>
+    </div>
+  </header>
+
+  <aside class="c-metrics-bar">
+    <div class="c-metric-card">
+      <span class="c-metric-card__label">Total Productos</span>
+      <span class="c-metric-card__value">{{ store.totalProductos() }}</span>
+    </div>
+    <div class="c-metric-card" [class.c-metric-card--alert]="store.totalStockBajo() > 0">
+      <span class="c-metric-card__label">Alertas de Stock Bajo</span>
+      <span class="c-metric-card__value">{{ store.totalStockBajo() }}</span>
+    </div>
+  </aside>
+
+  <!-- Barra de Filtros Reactivos (RF-12) -->
+  <div class="c-filters-bar">
+    <mat-form-field appearance="outline" class="c-filters-bar__search">
+      <mat-label>Buscar por nombre o descripción</mat-label>
+      <input matInput [value]="store.searchTerm()" (input)="onSearchChange($event)" placeholder="Ej. Zapatillas, Monitor..." />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="c-filters-bar__category">
+      <mat-label>Categoría</mat-label>
+      <mat-select [value]="store.selectedCategoriaId()" (valueChange)="onCategoriaChange($event)">
+        <mat-option [value]="null">Todas las categorías</mat-option>
+        @for (cat of categorias(); track cat.id) {
+          <mat-option [value]="cat.id">{{ cat.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="c-filters-bar__actions">
+      <button
+        mat-stroked-button
+        [color]="store.soloStockBajo() ? 'warn' : 'basic'"
+        (click)="toggleStockBajo()"
+        [class.c-btn-active]="store.soloStockBajo()"
+        [disabled]="store.totalStockBajo() === 0 && !store.soloStockBajo()"
+        [matTooltip]="store.totalStockBajo() === 0 ? 'No hay productos con stock bajo en el inventario' : 'Filtrar sólo productos con stock bajo'"
+        class="c-filters-bar__btn-stock"
+      >
+        <mat-icon>warning</mat-icon>
+        <span>{{ store.soloStockBajo() ? 'Mostrando: Sólo Stock Bajo' : 'Filtrar Stock Bajo' }}</span>
+      </button>
+
+      @if (store.searchTerm() || store.selectedCategoriaId() !== null || store.soloStockBajo()) {
+        <button mat-button color="accent" (click)="limpiarFiltros()" class="c-filters-bar__btn-clear">
+          <mat-icon>clear</mat-icon>
+          <span>Limpiar Filtros</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (store.isLoading()) {
+    <div class="c-producto-list__loading" role="status">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span class="c-producto-list__loading-text">Cargando inventario...</span>
+    </div>
+  }
+
+  @if (store.error(); as errorMsg) {
+    <div class="c-producto-list__error" role="alert">
+      <mat-icon class="c-producto-list__error-icon">error_outline</mat-icon>
+      <span class="c-producto-list__error-text">{{ errorMsg }}</span>
+    </div>
+  }
+
+  <div class="c-producto-list__table-container">
+    <div class="c-producto-list__table-scroll">
+      <table mat-table [dataSource]="dataSource" matSort class="c-producto-table">
+      <!-- Columna Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="c-producto-table__header">Producto</th>
+        <td mat-cell *matCellDef="let producto" class="c-producto-table__cell">
+          <div class="c-producto-table__title">{{ producto.nombre }}</div>
+          @if (producto.descripcion) {
+            <div class="c-producto-table__subtitle">{{ producto.descripcion }}</div>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Columna Categoría -->
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="c-producto-table__header">Categoría</th>
+        <td mat-cell *matCellDef="let producto" class="c-producto-table__cell">
+          <span class="c-categoria-pill">{{ producto.categoriaNombre || 'Sin categoría' }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Columna Precio -->
+      <ng-container matColumnDef="precio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="c-producto-table__header">Precio</th>
+        <td mat-cell *matCellDef="let producto" class="c-producto-table__cell c-producto-table__price">
+          {{ producto.precio | currency:'COP':'symbol-narrow':'1.0-0' }}
+        </td>
+      </ng-container>
+
+      <!-- Columna Stock con Indicador Visual -->
+      <ng-container matColumnDef="stock">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="c-producto-table__header">Stock / Alerta</th>
+        <td mat-cell *matCellDef="let producto" class="c-producto-table__cell">
+          @if (isLowStock(producto)) {
+            <span class="c-stock-badge c-stock-badge--low" matTooltip="Stock por debajo del mínimo permitido">
+              <mat-icon class="c-stock-badge__icon">warning</mat-icon>
+              <span>Stock Bajo ({{ producto.stock }} / Mín: {{ producto.stockMinimo }})</span>
+            </span>
+          } @else {
+            <span class="c-stock-badge c-stock-badge--normal">
+              <mat-icon class="c-stock-badge__icon">check_circle</mat-icon>
+              <span>Normal ({{ producto.stock }} / Mín: {{ producto.stockMinimo }})</span>
+            </span>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Columna Fecha Creación -->
+      <ng-container matColumnDef="fechaCreacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="c-producto-table__header">Registrado</th>
+        <td mat-cell *matCellDef="let producto" class="c-producto-table__cell">
+          {{ producto.fechaCreacion | date:'dd/MM/yyyy' }}
+        </td>
+      </ng-container>
+
+      <!-- Columna Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef class="c-producto-table__header c-producto-table__header--actions">Acciones</th>
+        <td mat-cell *matCellDef="let producto" class="c-producto-table__cell c-producto-table__actions">
+          <div class="c-producto-table__actions-group">
+            <button mat-icon-button (click)="openAjusteStock(producto)" matTooltip="Ajustar stock (Entrada/Salida)" aria-label="Ajustar Stock" class="c-btn-ajuste">
+              <mat-icon>tune</mat-icon>
+            </button>
+            <button mat-icon-button (click)="openHistorialMovimientos(producto)" matTooltip="Ver historial de movimientos" aria-label="Historial" class="c-btn-historial">
+              <mat-icon>history</mat-icon>
+            </button>
+            <a mat-icon-button [routerLink]="['/productos', producto.id, 'editar']" matTooltip="Editar producto" aria-label="Editar" class="c-btn-edit">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button (click)="onDelete(producto)" matTooltip="Eliminar producto" aria-label="Eliminar" class="c-btn-delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="c-producto-table__header-row"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="c-producto-table__row"></tr>
+    </table>
+    </div>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="pageSizeOptions()"
+      [hidePageSize]="store.filteredProductos().length <= 10"
+      showFirstLastButtons
+      aria-label="Seleccionar página de productos"
+      class="c-producto-list__paginator"
+    ></mat-paginator>
+
+    @if (!store.isLoading() && store.filteredProductos().length === 0) {
+      <div class="c-producto-list__empty">
+        <mat-icon class="c-producto-list__empty-icon">inventory_2</mat-icon>
+        <p class="c-producto-list__empty-text">No se encontraron productos en el inventario.</p>
+      </div>
+    }
+  </div>
+</section>

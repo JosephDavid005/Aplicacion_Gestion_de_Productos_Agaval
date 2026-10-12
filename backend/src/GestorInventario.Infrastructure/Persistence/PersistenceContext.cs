@@ -1,5 +1,6 @@
 using GestorInventario.Application.Abstractions;
 using GestorInventario.Domain.Entities;
+using GestorInventario.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestorInventario.Infrastructure.Persistence;
@@ -12,6 +13,7 @@ public class PersistenceContext : DbContext, IUnitOfWork
 
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<Producto> Productos => Set<Producto>();
+    public DbSet<MovimientoInventario> MovimientosInventario => Set<MovimientoInventario>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +86,49 @@ public class PersistenceContext : DbContext, IUnitOfWork
                 .HasForeignKey(p => p.CategoriaId)
                 .HasConstraintName("FK_Productos_Categorias")
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<MovimientoInventario>(entity =>
+        {
+            entity.ToTable("MovimientosInventario", t =>
+            {
+                t.HasCheckConstraint("CK_Movimientos_Tipo", "[TipoMovimiento] IN ('ENTRADA', 'SALIDA')");
+            });
+
+            entity.HasKey(m => m.Id)
+                .HasName("PK_MovimientosInventario");
+
+            entity.Property(m => m.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(m => m.ProductoId)
+                .IsRequired();
+
+            entity.Property(m => m.TipoMovimiento)
+                .HasConversion(
+                    v => v == TipoMovimiento.Entrada ? "ENTRADA" : "SALIDA",
+                    v => v == "ENTRADA" ? TipoMovimiento.Entrada : TipoMovimiento.Salida)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsRequired();
+
+            entity.Property(m => m.Cantidad)
+                .IsRequired();
+
+            entity.Property(m => m.Fecha)
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("GETDATE()")
+                .IsRequired();
+
+            entity.Property(m => m.Observacion)
+                .HasMaxLength(255)
+                .IsRequired(false);
+
+            entity.HasOne(m => m.Producto)
+                .WithMany()
+                .HasForeignKey(m => m.ProductoId)
+                .HasConstraintName("FK_Movimientos_Productos")
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Categoria } from '../models/categoria.model';
+import { MovimientoInventario } from '../models/movimiento-inventario.model';
 import { AjustarStockRequest, CrearProductoRequest, EditarProductoRequest, Producto } from '../models/producto.model';
 
 @Injectable({
@@ -21,6 +22,10 @@ export class ProductosService {
 
   getProductoById(id: number): Observable<Producto> {
     return this.http.get<Producto>(`${this.baseUrl}/productos/${id}`);
+  }
+
+  getMovimientosByProductoId(id: number): Observable<MovimientoInventario[]> {
+    return this.http.get<MovimientoInventario[]>(`${this.baseUrl}/productos/${id}/movimientos`);
   }
 
   createProducto(payload: CrearProductoRequest): Observable<Producto> {

@@ -121,5 +121,13 @@ describe('ProductosService', () => {
     expect(req.request.method).toBe('GET');
     req.flush(mockCategorias);
   });
+
+  it('getMovimientosByProductoId debe enviar GET a /productos/:id/movimientos', () => {
+    service.getMovimientosByProductoId(5).subscribe();
+
+    const req = httpTesting.expectOne(`${baseUrl}/productos/5/movimientos`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
 });
 
